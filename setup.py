@@ -11,7 +11,7 @@ setup(
     description="Parser Python para análise de TID de tags RFID",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/seu-usuario/rfid-tag-tid-parser",
+    url="https://github.com/suporterfid/rfid-tag-tid-parser",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -41,7 +41,7 @@ setup(
         ],
     },
     project_urls={
-        "Bug Reports": "https://github.com/seu-usuario/rfid-tag-tid-parser/issues",
-        "Source": "https://github.com/seu-usuario/rfid-tag-tid-parser",
+        "Bug Reports": "https://github.com/suporterfid/rfid-tag-tid-parser/issues",
+        "Source": "https://github.com/suporterfid/rfid-tag-tid-parser",
     },
 )

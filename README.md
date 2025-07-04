@@ -17,12 +17,12 @@ Parser Python para análise de TID (Tag Identifier) de tags RFID. Extrai informa
 
 ### Instalação direta do GitHub
 ```bash
-pip install git+https://github.com/seu-usuario/rfid-tag-tid-parser.git
+pip install git+https://github.com/suporterfid/rfid-tag-tid-parser.git
 ```
 
 ### Instalação local
 ```bash
-git clone https://github.com/seu-usuario/rfid-tag-tid-parser.git
+git clone https://github.com/suporterfid/rfid-tag-tid-parser.git
 cd rfid-tag-tid-parser
 pip install -e .
 ```
@@ -106,10 +106,6 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para de
 
 ## 🐛 Bugs e Sugestões
 
-Encontrou um bug ou tem uma sugestão? Abra uma [issue](https://github.com/seu-usuario/rfid-tag-tid-parser/issues).
+Encontrou um bug ou tem uma sugestão? Abra uma [issue](https://github.com/suporterfid/rfid-tag-tid-parser/issues).
 
-## 📧 Contato
 
-Seu Nome - seu.email@exemplo.com
-
-Link do Projeto: [https://github.com/seu-usuario/rfid-tag-tid-parser](https://github.com/seu-usuario/rfid-tag-tid-parser)

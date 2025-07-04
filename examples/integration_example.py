@@ -27,7 +27,7 @@ try:
     from rfid_tag_parser import TagTidParser, parse_tid, get_serial_from_tid
 except ImportError:
     print("❌ Erro: rfid_tag_parser não está instalado.")
-    print("Execute: pip install git+https://github.com/seu-usuario/rfid-tag-tid-parser.git")
+    print("Execute: pip install git+https://github.com/suporterfid/rfid-tag-tid-parser.git")
     exit(1)
 
 
