@@ -34,7 +34,6 @@ class TagTidParser:
     Suporte para fabricantes:
     - Impinj (Monza R6, M700, M800, Monza 4/5 Series)
     - NXP (UCODE 7, 8, 9)
-    - Fudan (FM13UF Series)
     - Fallback universal para fabricantes desconhecidos
     
     Exemplo:
@@ -64,13 +63,7 @@ class TagTidParser:
         "E2806915": "NXP UCODE 9",
         "E2806995": "NXP UCODE 9",
         
-        # Fudan FM13UF Series
-        "E2827802": "Fudan FM13UF00051E",
-        "E2827882": "Fudan FM13UF00051E",
-        "E2827803": "Fudan FM13UF011E", 
-        "E2827883": "Fudan FM13UF011E",
-        "E2827804": "Fudan FM13UF011X",
-        "E2827884": "Fudan FM13UF011X",
+
         
         # Adicione mais conforme necessário
         # Formato: "XXXXXXXX": "Fabricante Modelo"
@@ -584,7 +577,6 @@ if __name__ == "__main__":
         "E2801191000000000000000B",  # Impinj M730
         "E28011A0000000000000000C",  # Impinj M770
         "E2806915000000000000000E",  # NXP UCODE 9
-        "E2827802000000000000001A",  # Fudan FM13UF
         "FF00AA00000000000000002A",  # Fabricante desconhecido
     ]
     

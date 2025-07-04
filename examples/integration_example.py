@@ -361,9 +361,7 @@ class RfidReaderSimulator:
             "E2806995000000000000000F",  # UCODE 9 #2
             "E28069159876543210FEDCBA",  # UCODE 9 #3
             
-            # Fudan tags
-            "E2827802000000000000001A",  # Fudan FM13UF
-            "E2827803000000000000001B",  # Fudan FM13UF
+
         ]
     
     def simulate_reading_session(self, duration_seconds: int = 60, 
