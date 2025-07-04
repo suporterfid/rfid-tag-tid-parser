@@ -1,0 +1,9 @@
+# Dependências de produção
+# (Este projeto não possui dependências externas)
+
+# Dependências de desenvolvimento (opcional)
+pytest>=6.0.0
+pytest-cov>=2.0.0
+black>=21.0.0
+flake8>=3.8.0
+mypy>=0.800
