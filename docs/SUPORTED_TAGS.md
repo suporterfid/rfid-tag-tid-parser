@@ -174,7 +174,7 @@ E2 80 11 90 00 00 00 00 00 00 00 0A
 
 ## NXP Semiconductors
 
-NXP é um fabricante líder em semicondutores com forte presença no mercado RFID.
+NXP é um fabricante em semicondutores com presença no mercado RFID.
 
 ### Características Gerais NXP
 - **Prefixo TID**: Varia por série
