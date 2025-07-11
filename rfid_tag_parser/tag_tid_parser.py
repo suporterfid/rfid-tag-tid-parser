@@ -145,6 +145,8 @@ class TagTidParser:
         
         # Armazenar TID original normalizado para referência
         self._tid_hex = tid_hex
+        # Flag para indicar se o objeto foi "descartado"
+        self._disposed = False
     
     def get_40bit_serial_hex(self) -> str:
         """
@@ -164,19 +166,26 @@ class TagTidParser:
             >>> parser.get_40bit_serial_hex()
             '000000000A'
         """
+        if self._disposed:
+            raise TagTidParserError("Objeto TagTidParser já foi descartado")
+
+        if self._is_impinj_tid():
+            serial = 0
+            if self._is_m700_series() or self._is_m800_series():
+                serial = (
+                    ((self._tid[6] & 0x3F) << 32)
+                    | (self._tid[7] << 24)
+                    | (self._tid[8] << 16)
+                    | (self._tid[9] << 8)
+                    | self._tid[10]
+                )
+            elif self._is_r6_series():
+                serial = self._get_r6_series_38bit_serial()
+            return f"{serial:010X}"
+
         if self._is_nxp_ucode9_tid():
-        # Algoritmo específico para NXP UCODE 9
-        # Serial está nos bytes 7-11 (índices 7, 8, 9, 10, 11)
             serial = 0
             for i in range(7, 12):
-                serial = (serial << 8) | self._tid[i]
-            return f"{serial:010X}"
-    
-        if self._is_impinj_tid():
-            # Algoritmo específico para tags Impinj
-            # Serial está nos bytes 6-10 (índices 6, 7, 8, 9, 10)
-            serial = 0
-            for i in range(6, 11):
                 serial = (serial << 8) | self._tid[i]
             return f"{serial:010X}"
         
@@ -210,6 +219,33 @@ class TagTidParser:
         """
         # Extrair últimos 5 bytes (índices 7, 8, 9, 10, 11)
         return self._tid[-5:].hex().upper()
+
+    def _is_r6_series(self) -> bool:
+        """Verifica se o TMN corresponde a um chip da família Monza R6."""
+        tmn = ((self._tid[2] & 0x0F) << 8) | self._tid[3]
+        return tmn in {0x120, 0x121, 0x122, 0x170}
+
+    def _is_m700_series(self) -> bool:
+        """Verifica se o TMN corresponde a um chip da série M700."""
+        tmn = ((self._tid[2] & 0x0F) << 8) | self._tid[3]
+        return tmn in {0x190, 0x191, 0x1A0, 0x1A2}
+
+    def _is_m800_series(self) -> bool:
+        """Verifica se o TMN corresponde a um chip da série M800."""
+        tmn = ((self._tid[2] & 0x0F) << 8) | self._tid[3]
+        return tmn == 0x1B0
+
+    def _get_r6_series_38bit_serial(self) -> int:
+        """Obtém o serial de 38 bits para tags Monza R6."""
+        if not self._is_r6_series():
+            raise TagTidParserError("Tag não é da família Monza R6")
+        return (
+            ((self._tid[6] & 0x3F) << 32)
+            | (self._tid[7] << 24)
+            | (self._tid[8] << 16)
+            | (self._tid[9] << 8)
+            | self._tid[10]
+        )
     
     def _is_impinj_tid(self) -> bool:
         """
@@ -422,6 +458,12 @@ class TagTidParser:
             int: Hash do TID
         """
         return hash(self._tid_hex)
+
+    def dispose(self) -> None:
+        """Descarta o objeto limpando os dados do TID."""
+        if not self._disposed:
+            self._tid = b""
+            self._disposed = True
 
 
 # ============================================================================
