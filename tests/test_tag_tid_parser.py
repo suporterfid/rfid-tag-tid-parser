@@ -7,6 +7,7 @@ Adicione este conteúdo ao arquivo tests/test_tag_tid_parser.py
 import unittest
 from rfid_tag_parser import TagTidParser, parse_tid, get_serial_from_tid
 from rfid_tag_parser.exceptions import InvalidTidError, TagTidParserError  # ← ADICIONAR ESTA IMPORTAÇÃO
+from rfid_tag_parser.tag_tid_parser import validate_tid
 
 
 class TestTagTidParser(unittest.TestCase):
@@ -264,6 +265,19 @@ class TestAdditionalTidExamples(unittest.TestCase):
                     get_serial_from_tid(tid, "decimal"), int(expected_serial, 16)
                 )
 
+
+class TestValidateTidFunction(unittest.TestCase):
+    """Testa a função validate_tid com TIDs específicos."""
+
+    def test_specific_tids_are_valid(self):
+        """Verifica se os TIDs fornecidos são considerados válidos."""
+        tids = [
+            "E2801190000000000000000A",
+            "E2801190000000000000000B",
+        ]
+        for tid in tids:
+            with self.subTest(tid=tid):
+                self.assertTrue(validate_tid(tid))
 
 if __name__ == "__main__":
     unittest.main()
