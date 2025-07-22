@@ -6,7 +6,7 @@ Adicione este conteúdo ao arquivo tests/test_tag_tid_parser.py
 
 import unittest
 from rfid_tag_parser import TagTidParser, parse_tid, get_serial_from_tid
-from rfid_tag_parser.exceptions import InvalidTidError  # ← ADICIONAR ESTA IMPORTAÇÃO
+from rfid_tag_parser.exceptions import InvalidTidError, TagTidParserError  # ← ADICIONAR ESTA IMPORTAÇÃO
 
 
 class TestTagTidParser(unittest.TestCase):
@@ -209,6 +209,37 @@ class TestEdgeCases(unittest.TestCase):
         
         model_name = parser.get_tag_model_name()
         self.assertIn("Desconhecido", model_name)
+
+
+class Test38BitSerialValidation(unittest.TestCase):
+    """Testes específicos para validação do serial de 38 bits."""
+
+    def setUp(self):
+        self.valid_r6 = "E280112000003FFFFFFFFF0A"
+        self.no_xtid = "E200112000003FFFFFFFFF0A"
+        self.non_r6 = "E2801190000000000000000A"
+
+    def test_valid_38bit_serial_int(self):
+        parser = TagTidParser(self.valid_r6)
+        serial = parser.get_38bit_serial_int()
+        self.assertEqual(serial, 0x3FFFFFFFFF)
+        self.assertLess(serial, 1 << 38)
+
+    def test_valid_38bit_serial_bin(self):
+        parser = TagTidParser(self.valid_r6)
+        bserial = parser.get_38bit_serial_bin()
+        self.assertEqual(len(bserial), 38)
+        self.assertTrue(all(c in "01" for c in bserial))
+
+    def test_xtid_missing(self):
+        parser = TagTidParser(self.no_xtid)
+        with self.assertRaises(InvalidTidError):
+            parser.get_38bit_serial_int()
+
+    def test_non_r6_series(self):
+        parser = TagTidParser(self.non_r6)
+        with self.assertRaises(TagTidParserError):
+            parser.get_38bit_serial_int()
 
 
 if __name__ == "__main__":

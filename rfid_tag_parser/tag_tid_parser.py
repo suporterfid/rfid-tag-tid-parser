@@ -207,6 +207,19 @@ class TagTidParser:
         """
         hex_serial = self.get_40bit_serial_hex()
         return int(hex_serial, 16)
+
+    # ------------------------------------------------------------------
+    # Métodos para serial de 38 bits (SGTIN-96)
+    # ------------------------------------------------------------------
+
+    def get_38bit_serial_int(self) -> int:
+        """Retorna o serial de 38 bits como inteiro."""
+        return self._get_r6_series_38bit_serial()
+
+    def get_38bit_serial_bin(self) -> str:
+        """Retorna o serial de 38 bits em formato binário (38 caracteres)."""
+        serial = self.get_38bit_serial_int()
+        return f"{serial:038b}"
     
     def _get_fallback_serial_hex(self) -> str:
         """
@@ -235,17 +248,51 @@ class TagTidParser:
         tmn = ((self._tid[2] & 0x0F) << 8) | self._tid[3]
         return tmn == 0x1B0
 
+    # ------------------------------------------------------------------
+    # Validations
+    # ------------------------------------------------------------------
+
+    def _validate_tid_structure(self) -> None:
+        """Valida estrutura básica do TID para serial de 38 bits (SGTIN-96)."""
+        if not self._tid:
+            raise InvalidTidError("TID vazio")
+
+        if len(self._tid) < 8:
+            raise InvalidTidError("TID deve ter pelo menos 8 bytes")
+
+        # Verificar cabeçalho padrão (EPC Gen2)
+        if self._tid[0] != 0xE2 or self._tid[1] & 0x7F != 0x00:
+            raise InvalidTidError("Estrutura de TID inválida")
+
+        # XTID indicator bit (bit7 do byte 1) deve estar definido
+        if not (self._tid[1] & 0x80):
+            raise InvalidTidError("Bit XTID ausente no TID")
+
+        # Fabricante (bits 7-4 do byte 2) deve ser não zero
+        if (self._tid[2] >> 4) == 0:
+            raise InvalidTidError("Fabricante inválido no TID")
+
+        # Após essa validação simples, assume-se que o TID possui layout válido
+
     def _get_r6_series_38bit_serial(self) -> int:
         """Obtém o serial de 38 bits para tags Monza R6."""
+        self._validate_tid_structure()
+
         if not self._is_r6_series():
             raise TagTidParserError("Tag não é da família Monza R6")
-        return (
+
+        serial = (
             ((self._tid[6] & 0x3F) << 32)
             | (self._tid[7] << 24)
             | (self._tid[8] << 16)
             | (self._tid[9] << 8)
             | self._tid[10]
         )
+
+        if serial >= 1 << 38:
+            raise TagTidParserError("Número serial excede 38 bits")
+
+        return serial
     
     def _is_impinj_tid(self) -> bool:
         """
