@@ -90,7 +90,16 @@ TID_SAMPLES = {
     "alternating_pattern": {
         "tid": "AAAAAAAAAAAAAAAAAAAAAAA5",
         "description": "TID com padrão alternado"
+    },
+    "example_tid_1": {
+        "tid": "E2801170200044DC7EC10B9B",
+        "description": "Exemplo adicional de TID"
+    },
+    "example_tid_2": {
+        "tid": "E28011B0200051F7E4810358",
+        "description": "Exemplo adicional de TID"
     }
+    # Novos exemplos de TID podem ser adicionados aqui
 }
 
 # ============================================================================

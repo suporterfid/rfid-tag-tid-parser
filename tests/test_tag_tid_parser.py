@@ -242,5 +242,28 @@ class Test38BitSerialValidation(unittest.TestCase):
             parser.get_38bit_serial_int()
 
 
+class TestAdditionalTidExamples(unittest.TestCase):
+    """Testes para TIDs extras fornecidos nos exemplos."""
+
+    def test_parsing_and_serial_extraction(self):
+        """Garante que o parser extrai corretamente o serial dos novos TIDs."""
+        examples = {
+            "E2801170200044DC7EC10B9B": "04DC7EC10B",
+            "E28011B0200051F7E4810358": "11F7E48103",
+            # Adicione novos exemplos de TID e serial abaixo
+        }
+
+        for tid, expected_serial in examples.items():
+            with self.subTest(tid=tid):
+                info = parse_tid(tid)
+                self.assertEqual(info["serial_hex"], expected_serial)
+                self.assertEqual(
+                    get_serial_from_tid(tid, "hex"), expected_serial
+                )
+                self.assertEqual(
+                    get_serial_from_tid(tid, "decimal"), int(expected_serial, 16)
+                )
+
+
 if __name__ == "__main__":
     unittest.main()
