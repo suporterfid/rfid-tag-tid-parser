@@ -62,7 +62,7 @@ class TagTidParser:
         # NXP UCODE 9 Series
         "E2806915": "NXP UCODE 9",
         "E2806995": "NXP UCODE 9",
-        
+
 
         
         # Adicione mais conforme necessário
