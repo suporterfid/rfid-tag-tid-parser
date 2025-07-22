@@ -69,21 +69,23 @@ class TestTagTidParser(unittest.TestCase):
     
     def test_serial_extraction_hex(self):
         """Testa extração de serial em hexadecimal."""
-        parser = TagTidParser(self.valid_tids["impinj_monza_r6"])
+        tid = self.valid_tids["impinj_monza_r6"]
+        parser = TagTidParser(tid)
         serial = parser.get_40bit_serial_hex()
         self.assertEqual(len(serial), 10)  # 40 bits = 10 caracteres hex
         self.assertTrue(all(c in '0123456789ABCDEF' for c in serial))
-        logger.info(f"serial_hex: {serial}")
+        logger.info(f"serial_hex: {tid} -> {serial}")
     
     def test_serial_extraction_decimal(self):
         """Testa extração de serial em decimal."""
-        parser = TagTidParser(self.valid_tids["impinj_monza_r6"])
+        tid = self.valid_tids["impinj_monza_r6"]
+        parser = TagTidParser(tid)
         serial_hex = parser.get_40bit_serial_hex()
         serial_dec = parser.get_40bit_serial_decimal()
 
         # Verifica se a conversão está correta
         self.assertEqual(serial_dec, int(serial_hex, 16))
-        logger.info(f"serial_dec: {serial_dec} serial_hex: {serial_hex}")
+        logger.info(f"serial_dec: {tid} -> {serial_dec} serial_hex: {serial_hex}")
     
     def test_impinj_detection(self):
         """Testa detecção de tags Impinj."""
@@ -95,29 +97,32 @@ class TestTagTidParser(unittest.TestCase):
         
         for name in impinj_tids:
             with self.subTest(name=name):
-                parser = TagTidParser(self.valid_tids[name])
+                tid = self.valid_tids[name]
+                parser = TagTidParser(tid)
                 self.assertTrue(parser._is_impinj_tid())
                 self.assertFalse(parser._is_nxp_ucode9_tid())
                 logger.info(
-                    f"impinj_detection: {name} -> impinj={parser._is_impinj_tid()} nxp={parser._is_nxp_ucode9_tid()}"
+                    f"impinj_detection: {tid} -> impinj={parser._is_impinj_tid()} nxp={parser._is_nxp_ucode9_tid()}"
                 )
     
     def test_nxp_detection(self):
         """Testa detecção de tags NXP."""
-        parser = TagTidParser(self.valid_tids["nxp_ucode9"])
+        tid = self.valid_tids["nxp_ucode9"]
+        parser = TagTidParser(tid)
         self.assertTrue(parser._is_nxp_ucode9_tid())
         self.assertFalse(parser._is_impinj_tid())
         logger.info(
-            f"nxp_detection: nxp={parser._is_nxp_ucode9_tid()} impinj={parser._is_impinj_tid()}"
+            f"nxp_detection: {tid} -> nxp={parser._is_nxp_ucode9_tid()} impinj={parser._is_impinj_tid()}"
         )
     
     def test_model_number_extraction(self):
         """Testa extração do número do modelo."""
-        parser = TagTidParser(self.valid_tids["impinj_monza_r6"])
+        tid = self.valid_tids["impinj_monza_r6"]
+        parser = TagTidParser(tid)
         model_number = parser.get_tag_model_number()
         self.assertEqual(len(model_number), 3)  # 3 caracteres hex
         self.assertTrue(all(c in '0123456789ABCDEF' for c in model_number))
-        logger.info(f"model_number: {model_number}")
+        logger.info(f"model_number: {tid} -> {model_number}")
     
     def test_vendor_identification(self):
         """Testa identificação do fabricante."""
@@ -128,14 +133,16 @@ class TestTagTidParser(unittest.TestCase):
         
         for name, expected_vendor in test_cases:
             with self.subTest(name=name):
-                parser = TagTidParser(self.valid_tids[name])
+                tid = self.valid_tids[name]
+                parser = TagTidParser(tid)
                 vendor = parser.get_vendor_from_tid()
                 self.assertIn(expected_vendor, vendor)
-                logger.info(f"vendor_ident: {name} -> {vendor}")
+                logger.info(f"vendor_ident: {tid} -> {vendor}")
     
     def test_get_tid_info(self):
         """Testa a função que retorna todas as informações."""
-        parser = TagTidParser(self.valid_tids["impinj_monza_r6"])
+        tid = self.valid_tids["impinj_monza_r6"]
+        parser = TagTidParser(tid)
         info = parser.get_tid_info()
         
         required_keys = [
@@ -145,15 +152,16 @@ class TestTagTidParser(unittest.TestCase):
         
         for key in required_keys:
             self.assertIn(key, info)
-        logger.info(f"get_tid_info: {info}")
+        logger.info(f"get_tid_info: {tid} -> {info}")
     
     def test_monza_series_id(self):
         """Testa extração do ID da série Monza."""
-        parser = TagTidParser(self.valid_tids["impinj_monza_r6"])
+        tid = self.valid_tids["impinj_monza_r6"]
+        parser = TagTidParser(tid)
         if parser._is_impinj_tid():
             series_id = parser.get_monza_series_id()
             self.assertIn(series_id, [0, 1, 2, 3])  # Valores válidos: 0-3
-            logger.info(f"monza_series_id: {series_id}")
+            logger.info(f"monza_series_id: {tid} -> {series_id}")
 
 
 class TestConvenienceFunctions(unittest.TestCase):
@@ -177,14 +185,14 @@ class TestConvenienceFunctions(unittest.TestCase):
         serial = get_serial_from_tid(self.tid, "hex")
         self.assertIsInstance(serial, str)
         self.assertEqual(len(serial), 10)
-        logger.info(f"serial_from_tid_hex: {serial}")
+        logger.info(f"serial_from_tid_hex: {self.tid} -> {serial}")
     
     def test_get_serial_from_tid_decimal(self):
         """Testa extração de serial em decimal."""
         serial = get_serial_from_tid(self.tid, "decimal")
         self.assertIsInstance(serial, int)
         self.assertGreaterEqual(serial, 0)
-        logger.info(f"serial_from_tid_decimal: {serial}")
+        logger.info(f"serial_from_tid_decimal: {self.tid} -> {serial}")
     
     def test_get_serial_conversion_consistency(self):
         """Testa consistência entre conversões hex/decimal."""
@@ -192,7 +200,7 @@ class TestConvenienceFunctions(unittest.TestCase):
         serial_dec = get_serial_from_tid(self.tid, "decimal")
 
         self.assertEqual(serial_dec, int(serial_hex, 16))
-        logger.info(f"serial_conversion: hex={serial_hex} dec={serial_dec}")
+        logger.info(f"serial_conversion: {self.tid} -> hex={serial_hex} dec={serial_dec}")
 
 
 class TestEdgeCases(unittest.TestCase):
@@ -209,14 +217,17 @@ class TestEdgeCases(unittest.TestCase):
         # Ambos devem funcionar
         self.assertIsNotNone(parser1.get_40bit_serial_hex())
         self.assertIsNotNone(parser2.get_40bit_serial_hex())
-        logger.info(f"tid_spaces: {parser1.get_40bit_serial_hex()} tid_hyphens: {parser2.get_40bit_serial_hex()}")
+        logger.info(
+            f"tid_spaces: {tid_with_spaces} -> {parser1.get_40bit_serial_hex()} "
+            f"tid_hyphens: {tid_with_hyphens} -> {parser2.get_40bit_serial_hex()}"
+        )
     
     def test_lowercase_tid(self):
         """Testa TID em minúsculas."""
         tid_lower = "e2801190000000000000000a"
         parser = TagTidParser(tid_lower)
         self.assertIsNotNone(parser.get_40bit_serial_hex())
-        logger.info(f"lowercase_tid: {parser.get_40bit_serial_hex()}")
+        logger.info(f"lowercase_tid: {tid_lower} -> {parser.get_40bit_serial_hex()}")
     
     def test_unknown_vendor(self):
         """Testa comportamento com fabricante desconhecido."""
@@ -226,7 +237,7 @@ class TestEdgeCases(unittest.TestCase):
 
         vendor = parser.get_vendor_from_tid()
         self.assertEqual(vendor, "Desconhecido")
-        logger.info(f"unknown_vendor: {vendor}")
+        logger.info(f"unknown_vendor: {unknown_tid} -> {vendor}")
     
     def test_unknown_model(self):
         """Testa comportamento com modelo desconhecido."""
@@ -236,7 +247,7 @@ class TestEdgeCases(unittest.TestCase):
 
         model_name = parser.get_tag_model_name()
         self.assertIn("Desconhecido", model_name)
-        logger.info(f"unknown_model: {model_name}")
+        logger.info(f"unknown_model: {unknown_model_tid} -> {model_name}")
 
 
 class Test38BitSerialValidation(unittest.TestCase):
@@ -252,26 +263,26 @@ class Test38BitSerialValidation(unittest.TestCase):
         serial = parser.get_38bit_serial_int()
         self.assertEqual(serial, 0x3FFFFFFFFF)
         self.assertLess(serial, 1 << 38)
-        logger.info(f"38bit_serial_int: {serial}")
+        logger.info(f"38bit_serial_int: {self.valid_r6} -> {serial}")
 
     def test_valid_38bit_serial_bin(self):
         parser = TagTidParser(self.valid_r6)
         bserial = parser.get_38bit_serial_bin()
         self.assertEqual(len(bserial), 38)
         self.assertTrue(all(c in "01" for c in bserial))
-        logger.info(f"38bit_serial_bin: {bserial}")
+        logger.info(f"38bit_serial_bin: {self.valid_r6} -> {bserial}")
 
     def test_xtid_missing(self):
         parser = TagTidParser(self.no_xtid)
         with self.assertRaises(InvalidTidError):
             parser.get_38bit_serial_int()
-        logger.info("38bit_xtid_missing raised InvalidTidError")
+        logger.info(f"38bit_xtid_missing: {self.no_xtid} raised InvalidTidError")
 
     def test_non_r6_series(self):
         parser = TagTidParser(self.non_r6)
         with self.assertRaises(TagTidParserError):
             parser.get_38bit_serial_int()
-        logger.info("38bit_non_r6_series raised TagTidParserError")
+        logger.info(f"38bit_non_r6_series: {self.non_r6} raised TagTidParserError")
 
 
 class TestAdditionalTidExamples(unittest.TestCase):
